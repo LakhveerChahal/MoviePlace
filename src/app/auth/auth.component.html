@@ -27,7 +27,14 @@
             <button type="submit" 
                 class="btn btn-outline-success" 
                 [disabled]="!loginForm.valid">
-                Login</button>
+                {{ isLoginMode ? 'Login' : 'Sign Up' }}
+            </button> |
+            <button type="button" 
+                class="btn btn-outline-warning"
+                (click)='isLoginMode = !isLoginMode'>
+                Switch to {{ isLoginMode ? 'Login' : 'Sign Up' }} Mode
+            </button>
+
         </form>
     </div>
 </div>

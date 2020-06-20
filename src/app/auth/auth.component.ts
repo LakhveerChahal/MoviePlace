@@ -8,10 +8,15 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./auth.component.css']
 })
 export class AuthComponent implements OnInit {
+  isLoginMode = true;
 
   constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
+  }
+
+  isLoggedIn(){
+    return this.authService.isLoggedIn();
   }
 
   onLogin(loginForm: NgForm){
@@ -21,6 +26,26 @@ export class AuthComponent implements OnInit {
       password: loginForm.value.password
     };
     console.log(this.authService.login(user));
+  }
+
+  onSubmit(form: NgForm){
+    if(!form.valid){
+      return;
+    }
+    const email = form.value.email;
+    const password = form.value.password;
+
+    if(this.isLoginMode){
+
+    }
+    else{
+      this.authService.signUp(email, password).subscribe((res) => {
+        console.log(res);
+      },
+      (err) => {
+        console.log(err);
+      });
+    }
   }
 
 }

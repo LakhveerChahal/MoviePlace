@@ -1,0 +1,13 @@
+<h1>
+    Your Cart
+</h1>
+<p *ngIf="movies.length === 0;else cartTemplate">Your cart is empty :(</p>
+<ng-template #cartTemplate>
+    <div class="list-group">
+        <div class="list-group-item clearfix" *ngFor="let item of movies">
+            <p>Movie name: {{item.movieName}}</p>
+            <p>Price: {{item.moviePrice}}</p>
+            <button class="btn float-right removeBtn" type="button" (click)="onRemoveClick(item.movieId)">Remove</button>
+        </div>
+    </div>
+</ng-template>

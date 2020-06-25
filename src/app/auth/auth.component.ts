@@ -19,15 +19,6 @@ export class AuthComponent implements OnInit {
     return this.authService.isLoggedIn();
   }
 
-  onLogin(loginForm: NgForm){
-    console.log(loginForm);
-    const user = {
-      email: loginForm.value.email,
-      password: loginForm.value.password
-    };
-    console.log(this.authService.login(user));
-  }
-
   onSubmit(form: NgForm){
     if(!form.valid){
       return;
@@ -36,16 +27,25 @@ export class AuthComponent implements OnInit {
     const password = form.value.password;
 
     if(this.isLoginMode){
-
+      this.authService.login(email, password).subscribe(
+        res => {
+          console.log(res);
+        },
+        err => {
+          console.log(err);
+        }
+      );
     }
     else{
       this.authService.signUp(email, password).subscribe((res) => {
-        console.log(res);
+        console.log('yeah!!' , res);
       },
       (err) => {
-        console.log(err);
+        console.log('Oop' , err);
       });
     }
+
+    form.reset();
   }
 
 }

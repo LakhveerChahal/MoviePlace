@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { AuthService } from '../services/auth.service';
+import { AuthService, AuthResponse } from '../services/auth.service';
+import { Observable } from 'rxjs';
+import { User } from '../Models/user.model';
 
 @Component({
   selector: 'app-auth',
@@ -9,10 +11,17 @@ import { AuthService } from '../services/auth.service';
 })
 export class AuthComponent implements OnInit {
   isLoginMode = true;
+  authObs: Observable<AuthResponse>;
+  errorMsg: string;
+  authUser: User;
 
   constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
+    this.authService.user.subscribe(authData => {
+      this.authUser = authData;
+      console.log(this.authUser);
+    });
   }
 
   isLoggedIn(){
@@ -27,24 +36,19 @@ export class AuthComponent implements OnInit {
     const password = form.value.password;
 
     if(this.isLoginMode){
-      this.authService.login(email, password).subscribe(
-        res => {
-          console.log(res);
-        },
-        err => {
-          console.log(err);
-        }
-      );
+      this.authObs = this.authService.login(email, password);
     }
     else{
-      this.authService.signUp(email, password).subscribe((res) => {
-        console.log('yeah!!' , res);
-      },
-      (err) => {
-        console.log('Oop' , err);
-      });
+      this.authObs = this.authService.signUp(email, password);
     }
+    this.authObs.subscribe(
+      res => {
 
+      },
+      err => {
+        this.errorMsg = err;
+      }
+    );
     form.reset();
   }
 

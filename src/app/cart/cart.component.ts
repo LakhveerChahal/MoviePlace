@@ -14,6 +14,8 @@ export class CartComponent implements OnInit, OnDestroy {
   cart: CartItem[] = [];
   movies: Movie[] = [];
   movieOb: any;
+  isLoading = false;
+
   constructor(private cartService: CartService, private movieService: MovieService) { }
 
   ngOnInit(): void {
@@ -23,15 +25,17 @@ export class CartComponent implements OnInit, OnDestroy {
   onRemoveClick(movieId: string){
     this.cartService.removeFromCart(movieId); 
     this.refreshCart();
-    console.log("MovieId: "+ movieId + JSON.stringify(this.movies));
   }
 
   refreshCart(){
+    this.isLoading =true;
     this.cart = this.cartService.cart;
     this.movieOb = this.movieService.getMovies().subscribe((data) => {
       this.movies = data.filter((m) => this.cart.some(c => c.movieId === m.movieId));
+      this.isLoading = false;
     });
   }
+
   ngOnDestroy(){
     this.movieOb.unsubscribe();
   }

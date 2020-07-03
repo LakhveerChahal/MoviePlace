@@ -19,24 +19,11 @@ export class MoviesComponent implements OnInit {
 
   loadMovies(){
     this.isLoading = true;
-    this.movieService.getMovies().subscribe((res: any) => {
-      const fetchedMovies: Movie[] = [];
-      res.forEach((m: any, i) => {
-        let movie: Movie = {
-          movieId: i,
-          movieName: m.movieName,
-          moviePrice: m.moviePrice,
-          movieGenres: [],
-          movieImgUrl: ''
-        };
-        m.genres.forEach((gId: any) => {
-          movie.movieGenres.push(m.genres[gId]);
-        });
-        fetchedMovies.push(movie);
-      });
-      this.movies = fetchedMovies;
+    this.movieService.getMovies().subscribe(movies => {
+      this.movies = movies;
       this.isLoading = false;
     });
+    
   }
   
 

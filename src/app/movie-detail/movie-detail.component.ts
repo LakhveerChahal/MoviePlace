@@ -19,10 +19,13 @@ export class MovieDetailComponent implements OnInit {
   ngOnInit(): void {
     this.getId();
     this.findGenres();
+    this.movieService.movieSubject.subscribe(movie => {
+      this.movieFound = movie;
+    })
   }
 
   getMovieById(movieId: string){
-    this.movieFound = this.movieService.getMovieById(movieId);
+    this.movieService.getMovieById(movieId);
   }
   
   findGenres(){

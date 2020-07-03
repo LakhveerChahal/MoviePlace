@@ -1,28 +1,33 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 import { Movie } from '../Models/movie.model';
 import { Genre } from '../Models/genre.model';
-import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MovieService {
-  movies: Movie[] = [];
+  movies: Movie[];
+  movieSubject = new Subject<Movie>();
   constructor(private http: HttpClient) { }
 
   getMovies() {
-    return this.http.get<[]>('https://movieplace-97b9e.firebaseio.com/Movies.json');
+    return this.http.get<Movie []>('https://movieplace-97b9e.firebaseio.com/Movies.json');
   }
 
-  getMovieById(movieId: string): Movie | null {
-    const movieFound = this.movies.find(m => m.movieId === movieId);
-    if (movieFound) {
-      return movieFound;
-    }
-    return null;
+  getMovieById(movieId: string){
+    this.getMovies().subscribe(m => {
+      const movies: Movie[] = m;
+      let movieFound: Movie;
+      movieFound = movies.find(m => m.movieId === movieId);
+      if (movieFound) {
+        this.movieSubject.next(movieFound);
+      }else{
+        this.movieSubject.next(null);
+      }
+    });
   }
 
   getGenres() {

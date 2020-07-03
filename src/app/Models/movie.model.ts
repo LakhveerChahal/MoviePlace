@@ -5,5 +5,5 @@ export interface Movie{
     movieName: string;
     movieGenres: string[];
     moviePrice: number;
-    movieImgUrl: string;
+    url: string;
 }

@@ -1,29 +1,42 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
+
 import { CartItem } from '../Models/cart-item.model';
 import { MovieService } from './movie.service';
-import { Subject } from 'rxjs';
+import { Movie } from '../Models/movie.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CartService {
+export class CartService{
   cart: CartItem[] = [];
   updateEvent = new Subject<void>();
+  movieById: Movie;
+
   constructor(private movieService: MovieService) { }
 
   addToCart(movieId: string){
-    const movie = this.movieService.getMovieById(movieId);
-    if(movie){
+    this.movieService.getMovieById(movieId);
+    const movieSub = this.movieService.movieSubject.subscribe(movie => {
+      this.movieById = movie;
+      this.addMovieToCart();
+      movieSub.unsubscribe();
+    });
+  }
+
+  private addMovieToCart(){
+    if(this.movieById){
       let cartItem: CartItem = {
-        movieId: movieId,
-        price: movie.moviePrice,
+        movieId: this.movieById.movieId,
+        price: this.movieById.moviePrice,
         timestamp: Date.parse(Date.now().toString())
       };
-      if(!this.cart.some(c => c.movieId === movieId)){
+      if(!this.cart.some(c => c.movieId === this.movieById.movieId)){
         this.cart.push(cartItem);
         this.emitUpdateEvent();
       }
     }
+    console.log(this.cart);
   }
 
   emitUpdateEvent(){

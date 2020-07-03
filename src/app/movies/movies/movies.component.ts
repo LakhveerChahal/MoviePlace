@@ -9,6 +9,7 @@ import { MovieService } from 'src/app/services/movie.service';
 })
 export class MoviesComponent implements OnInit {
   movies: Movie[];
+  isLoading = false;
 
   constructor(private movieService: MovieService) { }
 
@@ -17,8 +18,24 @@ export class MoviesComponent implements OnInit {
   }
 
   loadMovies(){
-    this.movieService.getMovies().subscribe((data: Movie[]) => {
-      this.movies = data;
+    this.isLoading = true;
+    this.movieService.getMovies().subscribe((res: any) => {
+      const fetchedMovies: Movie[] = [];
+      res.forEach((m: any, i) => {
+        let movie: Movie = {
+          movieId: i,
+          movieName: m.movieName,
+          moviePrice: m.moviePrice,
+          movieGenres: [],
+          movieImgUrl: ''
+        };
+        m.genres.forEach((gId: any) => {
+          movie.movieGenres.push(m.genres[gId]);
+        });
+        fetchedMovies.push(movie);
+      });
+      this.movies = fetchedMovies;
+      this.isLoading = false;
     });
   }
   

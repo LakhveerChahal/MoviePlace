@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { MovieService } from '../services/movie.service';
 import { Movie } from '../Models/movie.model';
+import { Genre } from '../Models/genre.model';
 
 @Component({
   selector: 'app-movie-detail',
@@ -10,23 +11,33 @@ import { Movie } from '../Models/movie.model';
   styleUrls: ['./movie-detail.component.css']
 })
 export class MovieDetailComponent implements OnInit {
-  movieId: string;
   movieFound: Movie;
+  movieGenres: Genre[];
+
   constructor(private movieService: MovieService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.getId();
-    this.getMovieById(this.movieId);
+    this.findGenres();
   }
 
   getMovieById(movieId: string){
     this.movieFound = this.movieService.getMovieById(movieId);
   }
   
+  findGenres(){
+    this.movieService.getGenres().subscribe(genres => {
+      genres.forEach(g => {
+        if(this.movieFound.movieGenres.includes(g.genreId)){
+          this.movieGenres.push(g);
+        }
+      })
+    });
+  }
+
   getId(){
     this.route.params.subscribe((params) => {
-      this.movieId = params['id'];
-      console.log(this.movieId);
+      this.getMovieById(params['id']);
     });
   }
 

@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar/navbar.component';
@@ -13,6 +13,9 @@ import { HomeComponent } from './home/home.component';
 import { CartComponent } from './cart/cart.component';
 import { MovieSearchComponent } from './movie-search/movie-search.component';
 import { AuthComponent } from './auth/auth.component';
+import { CheckoutComponent } from './checkout/checkout.component';
+import { AuthInterceptor } from './services/auth-interceptor';
+import { AuthGuard } from './services/auth.guard';
 
 const appRoutes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -20,7 +23,8 @@ const appRoutes: Routes = [
   { path: 'search/:searchString', component: MovieSearchComponent },
   { path: 'movies', component: MoviesComponent },
   { path: 'movie/:id', component: MovieDetailComponent },
-  { path: 'cart', component: CartComponent },
+  { path: 'cart', component: CartComponent, canActivate: [AuthGuard] },
+  { path: 'checkout', component: CheckoutComponent },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', redirectTo: '/home' }
 ];
@@ -35,7 +39,8 @@ const appRoutes: Routes = [
     HomeComponent,
     CartComponent,
     MovieSearchComponent,
-    AuthComponent
+    AuthComponent,
+    CheckoutComponent
   ],
   imports: [
     BrowserModule,
@@ -43,7 +48,7 @@ const appRoutes: Routes = [
     FormsModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

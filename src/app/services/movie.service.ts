@@ -11,10 +11,12 @@ import { Genre } from '../Models/genre.model';
 export class MovieService {
   movies: Movie[];
   movieSubject = new Subject<Movie>();
+  moviesUrl = 'https://movieplace-97b9e.firebaseio.com/Movies.json';
+
   constructor(private http: HttpClient) { }
 
   getMovies() {
-    return this.http.get<Movie []>('https://movieplace-97b9e.firebaseio.com/Movies.json');
+    return this.http.get<Movie []>(this.moviesUrl);
   }
 
   getMovieById(movieId: string){
@@ -31,6 +33,6 @@ export class MovieService {
   }
 
   getGenres() {
-    return this.http.get<Genre[]>('https://movieplace-97b9e.firebaseio.com/Movies.json');
+    return this.http.get<Genre[]>(this.moviesUrl);
   }
 }

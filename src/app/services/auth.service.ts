@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { catchError, tap } from 'rxjs/operators';
-import { throwError, Observable, Subject } from 'rxjs';
+import { throwError, BehaviorSubject } from 'rxjs';
 
 import { User } from '../Models/user.model';
 
@@ -18,9 +19,10 @@ export interface AuthResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  user = new Subject<User>();
+  user = new BehaviorSubject<User>(null);
+  autoLogoutInterval: any;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
   login(email: string, password: string) {
     return this.http.post<AuthResponse>('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyC8ZMWtzxmH1xJj4xb7VULqZ0DGmAzG_j4',
@@ -53,14 +55,43 @@ export class AuthService {
       );
   }
 
-  isLoggedIn() {
-    return false;
+  logout() {
+    this.user.next(null);
+    localStorage.removeItem('userData');
+    if (this.autoLogoutInterval) {
+      clearInterval(this.autoLogoutInterval);
+    }
+    this.autoLogoutInterval = null;
+    this.router.navigate(['/login']);
   }
 
   private handleAuthData(email: string, token: string, expiresIn: number, userId: string) {
     const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
     const user = new User(email, userId, token, expirationDate);
     this.user.next(user);
+    this.autoLogout(expiresIn * 1000);
+    localStorage.setItem('userData', JSON.stringify(user));
+  }
+
+  autoLogin() {
+    const userData:
+      {
+        email: string,
+        id: string,
+        _token: string,
+        _tokenExpirationDate
+      } = JSON.parse(localStorage.getItem('userData'));
+    if (!userData) {
+      return;
+    }
+    const user = new User(userData.email, userData.id, userData._token, new Date(userData._tokenExpirationDate));
+    this.user.next(user);
+  }
+
+  autoLogout(expirationDuration: number) {
+    this.autoLogoutInterval = setInterval(() => {
+      this.logout();
+    }, expirationDuration);
   }
 
 

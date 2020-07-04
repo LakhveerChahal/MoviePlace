@@ -1,9 +1,9 @@
 <h1>
     Your Cart
 </h1>
-<p *ngIf="movies.length === 0 && !isLoading;else cartTemplate">Your cart is empty :(</p>
 <p *ngIf="isLoading">Loading...</p>
-<ng-template #cartTemplate>
+<p *ngIf="movies.length === 0 && !isLoading">Your cart is empty :(</p>
+<div *ngIf="movies && movies.length>0 && !isLoading">
     <div class="list-group">
         <div class="list-group-item clearfix" *ngFor="let item of movies">
             <p>Movie name: {{item.movieName}}</p>
@@ -11,4 +11,5 @@
             <button class="btn float-right removeBtn" type="button" (click)="onRemoveClick(item.movieId)">Remove</button>
         </div>
     </div>
-</ng-template>
+    <a [routerLink]="['/checkout']" class="btn btn-warning" >Checkout</a>
+</div>

@@ -26,9 +26,7 @@
           <a class="nav-link" [routerLink]="['/login']" routerLinkActive="active" *ngIf="!isLoggedIn">
             Sign-in
           </a>
-          <a class="nav-link" [routerLink]="['/login']" routerLinkActive="active" *ngIf="isLoggedIn">
-            Log out
-          </a>
+          <button type="button" class="nav-link btn" (click)="onLogout()" *ngIf="isLoggedIn">Logout</button>
         </li>
       </ul>
     </div>

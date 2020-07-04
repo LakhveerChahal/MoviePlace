@@ -23,8 +23,8 @@ const appRoutes: Routes = [
   { path: 'search/:searchString', component: MovieSearchComponent },
   { path: 'movies', component: MoviesComponent },
   { path: 'movie/:id', component: MovieDetailComponent },
-  { path: 'cart', component: CartComponent, canActivate: [AuthGuard] },
-  { path: 'checkout', component: CheckoutComponent },
+  { path: 'cart', component: CartComponent },
+  { path: 'checkout', component: CheckoutComponent, canActivate: [AuthGuard] },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', redirectTo: '/home' }
 ];

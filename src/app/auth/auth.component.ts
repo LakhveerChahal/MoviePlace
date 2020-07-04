@@ -24,10 +24,6 @@ export class AuthComponent implements OnInit {
     });
   }
 
-  isLoggedIn(){
-    return this.authService.isLoggedIn();
-  }
-
   onSubmit(form: NgForm){
     if(!form.valid){
       return;
